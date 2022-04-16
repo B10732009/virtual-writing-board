@@ -17,6 +17,9 @@ class Painter:
             (255, 255, 255)
         ]
 
+        self.color_box_height = int(self.canvas_height/10)
+        self.color_box_width = int(self.canvas_width/(len(self.color_list)))
+
         # refresh canvas
         self.refresh_canvas(self.canvas_height, self.canvas_width)
 
@@ -40,21 +43,14 @@ class Painter:
         # refresh the canvas
         self.canvas = np.zeros(
             (canvas_height, canvas_width, 3), np.uint8)
-        '''self.canvas = cv2.rectangle(
-            self.canvas, (0, 0), (160, 50), self.color_list[0], -1)
-        self.canvas = cv2.rectangle(
-            self.canvas, (160, 0), (320, 50), self.color_list[1], -1)
-        self.canvas = cv2.rectangle(
-            self.canvas, (320, 0), (480, 50), self.color_list[2], -1)
-        self.canvas = cv2.rectangle(
-            self.canvas, (480, 0), (640, 50), self.color_list[3], -1)'''
 
-        l = len(self.color_list)
-        for i in range(l):
-            a = int(i*self.canvas_width/len(self.color_list))
-            b = int((i+1)*self.canvas_width/len(self.color_list))
+        # draw the color boxes at the bottom of image
+        for i in range(len(self.color_list)):
             self.canvas = cv2.rectangle(
-                self.canvas, (a, 0), (b, 50), self.color_list[i], -1)
+                self.canvas, (self.color_box_width*i, self.canvas_height),
+                (self.color_box_width*(i+1),
+                 self.canvas_height - self.color_box_height),
+                self.color_list[i], -1)
 
         # refresh the drawing status
         self.is_drawing = False
@@ -63,3 +59,9 @@ class Painter:
 
     def select_color(self, color):
         self.color = color
+
+    def zone(self, x, y):
+        if 0 < x and x < self.canvas_width \
+                and self.canvas_height-self.color_box_height < y and y < self.canvas_height:
+            return "selecting"
+        return "drawing"

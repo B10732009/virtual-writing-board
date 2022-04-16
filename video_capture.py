@@ -1,5 +1,4 @@
 import cv2
-from cv2 import threshold
 import mediapipe as mp
 import math
 
@@ -35,8 +34,8 @@ class VedioCapture:
         for landmark in self.landmarks:
             lm_list = []
             for lm in landmark.landmark:
-                lm_list.append([(int)(lm.x*self.img_width),
-                                (int)(lm.y*self.img_height)])
+                lm_list.append([int(lm.x*self.img_width),
+                                int(lm.y*self.img_height)])
             self.landmark_list.append(lm_list)
 
     def refresh_drawing_mode(self):
@@ -53,8 +52,3 @@ class VedioCapture:
         for landmark in self.landmarks:
             self.mp_draw.draw_landmarks(
                 self.img, landmark, self.mp_hands.HAND_CONNECTIONS)
-
-
-def angle(v1x, v1y, v2x, v2y):
-    return math.acos((v1x*v2x+v1y*v2y) /
-                     (math.sqrt(v1x*v1x+v1y*v1y)*(math.sqrt(v2x*v2x+v2y*v2y))))*(180/math.pi)
