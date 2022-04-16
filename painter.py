@@ -52,6 +52,13 @@ class Painter:
                  self.canvas_height - self.color_box_height),
                 self.color_list[i], -1)
 
+        self.canvas = cv2.rectangle(
+            self.canvas, (0, 0),
+            (int(self.color_box_width/2), self.color_box_height),
+            (255, 255, 255), -1)
+        # cv2.putText(self.canvas, 'clean', (10, 20), cv2.FONT_HERSHEY_DUPLEX,
+        # 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+
         # refresh the drawing status
         self.is_drawing = False
         self.start_point = (-1, -1)
@@ -64,4 +71,7 @@ class Painter:
         if 0 < x and x < self.canvas_width \
                 and self.canvas_height-self.color_box_height < y and y < self.canvas_height:
             return "selecting"
+        elif 0 < x and x < int(self.color_box_width/2) \
+                and 0 < y and y < self.color_box_height:
+            return "cleaning"
         return "drawing"

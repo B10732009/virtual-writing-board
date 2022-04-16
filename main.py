@@ -5,17 +5,6 @@ import video_capture
 import fps
 import painter
 
-
-def coodr_trans(img, perc_x, perc_y):
-    x = (int)(img.shape[1]*perc_x)
-    y = (int)(img.shape[0]*perc_y)
-    return (x, y)
-
-
-def create_empty_canvas(canvas_height, canvas_width):
-    np.zeros((canvas_height, canvas_width, 3), np.uint8)
-
-
 #-----------------------------main-----------------------------#
 # declare objects
 vc = video_capture.VedioCapture()
@@ -50,8 +39,11 @@ while True:
                 break
             else:
                 pt.end_draw()
-                if pt.zone(if_x, if_y) == "selecting":
+                z = pt.zone(if_x, if_y)
+                if z == "selecting":
                     pt.select_color(int(if_x/pt.color_box_width))
+                elif z == "cleaning":
+                    pt.refresh_canvas(pt.canvas_height, pt.canvas_width)
     else:
         pt.end_draw()
 
