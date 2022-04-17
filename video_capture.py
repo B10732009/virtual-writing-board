@@ -20,7 +20,7 @@ class VedioCapture:
         self.landmark_list = []
 
         # drawing mode
-        self.mode = "drawing"
+        self.mode = "none"
 
     def refresh_image(self):
         self.ret, self.img = self.vedio_capture.read()
@@ -39,22 +39,16 @@ class VedioCapture:
             self.landmark_list.append(lm_list)
 
     def refresh_drawing_mode(self):
+        self.mode = "none"
         for lm_list in self.landmark_list:
-            '''dis = (lm_list[4][0]-lm_list[8][0])**2 + \
-                (lm_list[4][1]-lm_list[8][1])**2
-            thres = 1000
-            if dis < thres:
-                self.mode = "selecting"
-            else:
-                self.mode = "drawing"'''
-
             v1 = (lm_list[6][0]-lm_list[5][0], lm_list[6][1]-lm_list[5][1])
             v2 = (lm_list[7][0]-lm_list[6][0], lm_list[7][1]-lm_list[6][1])
-            if angle(v1, v2) > 30:
+            thres = 30
+            if angle(v1, v2) > thres:
                 self.mode = "selecting"
             else:
                 self.mode = "drawing"
-            # print(self.mode)
+            break
 
     def draw_hand_skeleton(self):
         for landmark in self.landmarks:
@@ -62,7 +56,7 @@ class VedioCapture:
                 self.img, landmark, self.mp_hands.HAND_CONNECTIONS)
 
 
-# -------------------------------------------------
+# calculate the angle of 2 vectors
 def vlength(v):
     return math.sqrt(v[0]**2 + v[1]**2)
 
@@ -72,8 +66,6 @@ def vdot(v1, v2):
 
 
 def angle(v1, v2):
-    #print('--', vdot(v1, v2)/vlength(v1)/vlength(v2))
-    #print(math.acos(vdot(v1, v2)/vlength(v1)/vlength(v2)))
     cos_value = vdot(v1, v2)/(vlength(v1)+0.01)/(vlength(v2)+0.01)
     if cos_value > 1:
         cos_value = 1
