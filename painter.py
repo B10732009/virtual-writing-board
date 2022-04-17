@@ -11,10 +11,14 @@ class Painter:
         # color list and current selected color
         self.color = 0
         self.color_list = [
+            (255, 255, 255),
+            (255, 128, 0),
             (255, 255, 0),
             (0, 255, 0),
+            (0, 128, 255),
             (0, 0, 255),
-            (255, 255, 255)
+            (128, 0, 255),
+            (0, 0, 0)
         ]
 
         self.color_box_height = int(self.canvas_height/10)
@@ -56,8 +60,6 @@ class Painter:
             self.canvas, (0, 0),
             (int(self.color_box_width/2), self.color_box_height),
             (255, 255, 255), -1)
-        # cv2.putText(self.canvas, 'clean', (10, 20), cv2.FONT_HERSHEY_DUPLEX,
-        # 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
         # refresh the drawing status
         self.is_drawing = False
