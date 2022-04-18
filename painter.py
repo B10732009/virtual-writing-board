@@ -26,17 +26,24 @@ class Painter:
         self.color_box_width = int(self.canvas_width/(len(self.color_list)))
 
         # refresh canvas
-        self.refresh_canvas(self.canvas_height, self.canvas_width)
+        self.refresh_canvas()
 
     def start_draw(self, start_point):
+        # set the drawing flag
         self.is_drawing = True
+
+        # if the start point hasn't been set, set it
         if self.start_point == (-1, -1):
             self.start_point = start_point
 
     def draw(self, point):
+        # check if the mode is "drawing"
         if self.is_drawing:
+            # set end point
             self.end_point = point
 
+            # if in eraser mode, print out the circle
+            # and refresh toolbox
             if self.color == len(self.color_list)-1:
                 cv2.line(self.canvas, self.start_point,
                          self.end_point, self.color_list[self.color], 40)
@@ -45,16 +52,20 @@ class Painter:
                 cv2.line(self.canvas, self.start_point,
                          self.end_point, self.color_list[self.color], 2)
 
+            # set the current end point as the next time start point
             self.start_point = self.end_point
 
     def end_draw(self):
+        # unset the drawing flag
         self.is_drawing = False
+
+        # unset the start point
         self.start_point = (-1, -1)
 
-    def refresh_canvas(self, canvas_height, canvas_width):
-        # reset canvas and tool box
+    def refresh_canvas(self):
+        # reset canvas and toolbox
         self.canvas = np.zeros(
-            (canvas_height, canvas_width, 3), np.uint8)
+            (self.canvas_height, self.canvas_width, 3), np.uint8)
         self.refresh_tool_box()
 
         # refresh the drawing status
@@ -77,14 +88,21 @@ class Painter:
                       self.color_box_height, self.canvas_width - self.color_box_width)
 
     def load_img(self, filename, x, y):
+        # load picture
         img = cv2.imread(filename)
+
+        # get picture height and width
         h, w, _ = img.shape
+
+        # replace the canvas with picture at given position
         self.canvas[x:x+h, y:y+w, :] = img[0:h, 0:w, :]
 
     def select_color(self, color):
         self.color = color
 
     def zone(self, x, y):
+        # check which zone the given position (x, y) is in
+        # drawing zone, selecting zone, cleaning zone
         if 0 < x and \
                 x < self.canvas_width and \
                 self.canvas_height-self.color_box_height < y and \

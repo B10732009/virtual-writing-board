@@ -16,7 +16,7 @@ while True:
     # refresh the image from camera
     # and check if it is successfully captured
     vc.refresh_image()
-    if not vc.ret:
+    if not vc.success:
         continue
 
     mode = "none"
@@ -50,7 +50,7 @@ while True:
                 if z == "selecting":
                     pt.select_color(int(now_x/pt.color_box_width))
                 elif z == "cleaning":
-                    pt.refresh_canvas(pt.canvas_height, pt.canvas_width)
+                    pt.refresh_canvas()
                 break
     else:
         pt.end_draw()
@@ -58,6 +58,7 @@ while True:
     # merge the camera image with canvas
     merged_img = cv2.addWeighted(vc.img, 0.3, pt.canvas, 0.7, 0)
 
+    # add a circle at current position
     if not (mode == "none"):
         if pt.color == len(pt.color_list)-1:
             cv2.circle(merged_img, (now_x, now_y), 20,
@@ -69,11 +70,12 @@ while True:
     # change the direction of image
     merged_img = cv2.flip(merged_img, 1)
 
-    # refresh the FPS value and print out it
+    # refresh the FPS value
     f.refresh()
+
+    # print out FPS and mode infomation
     cv2.putText(merged_img, 'FPS:{}'.format(f.get_fps()), (10, 20), cv2.FONT_HERSHEY_DUPLEX,
                 0.5, (255, 255, 255), 1, cv2.LINE_AA)
-
     cv2.putText(merged_img, 'MODE:{}'.format(mode), (10, 40), cv2.FONT_HERSHEY_DUPLEX,
                 0.5, (255, 255, 255), 1, cv2.LINE_AA)
 

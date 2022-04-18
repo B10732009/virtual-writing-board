@@ -5,7 +5,7 @@ import math
 
 class VedioCapture:
     def __init__(self):
-        # initialize basic objects
+        # initialize basic model objects
         self.vedio_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.mp_hands = mp.solutions.hands
         self.hands = mp.solutions.hands.Hands()
@@ -23,27 +23,40 @@ class VedioCapture:
         self.mode = "none"
 
     def refresh_image(self):
-        self.ret, self.img = self.vedio_capture.read()
+        # read image from camera
+        self.success, self.img = self.vedio_capture.read()
 
     def refresh_landmarks(self):
+        # read the landmark from MediaPipe
         img_rgb = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
         self.landmarks = self.hands.process(img_rgb).multi_hand_landmarks
 
     def refresh_landmark_list(self):
+        # transform the landmarks into list
         self.landmark_list = []
         for landmark in self.landmarks:
             lm_list = []
             for lm in landmark.landmark:
+                # multiplied by img_width and img_height
                 lm_list.append([int(lm.x*self.img_width),
                                 int(lm.y*self.img_height)])
             self.landmark_list.append(lm_list)
 
     def refresh_drawing_mode(self):
+        # refresh current mode
+
+        # if camera cannot find the hand
+        # set the mode to "none"
         self.mode = "none"
+
         for lm_list in self.landmark_list:
             v1 = (lm_list[6][0]-lm_list[5][0], lm_list[6][1]-lm_list[5][1])
             v2 = (lm_list[7][0]-lm_list[6][0], lm_list[7][1]-lm_list[6][1])
             thres = 30
+
+            # if the index finger bends more than 30 degree
+            # set the mode to "selecting"
+            # otherwise set the mode to "drawing"
             if angle(v1, v2) > thres:
                 self.mode = "selecting"
             else:
@@ -51,6 +64,7 @@ class VedioCapture:
             break
 
     def draw_hand_skeleton(self):
+        # use landmarks to draw the hand skeleton
         for landmark in self.landmarks:
             self.mp_draw.draw_landmarks(
                 self.img, landmark, self.mp_hands.HAND_CONNECTIONS)
